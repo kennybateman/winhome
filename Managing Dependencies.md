@@ -1,4 +1,3 @@
-
 I want to do any and all of my linux based development from WSL. Most common versions of Linux are derived from Debian, which comes with ```apt```, but as soon as possible after booting the OS, 
 
 # Managing all software and package versions
@@ -115,36 +114,3 @@ in pkgs.mkShell {
 ```
 
 The ```shellHook``` portion will run when the shell finishes loading. At this point, Nix knows the specific versions of the packages, so we can write it to a file called ```nix.txt```.
-
-
-Operation System setup instructions...
-
-1. Download and Run Debian from Microsoft Store on Windows OS
-
-2. using apt install... curl, xz-utils, git, direnv, and wget
-
-3. install nix via curl
-
-
-First time VSCode setup...
-
-1. Open it from Windows
-
-2. Set Debian to be default terminal
-
-3. Navigate to project directory on WSL
-
-4. Run ```code -r .``` in the home directory, and you will be prompted to install VSCode Server via wget
-
-
-Maintaining dependencies...
-
-1. Be aware of all apt package versions that were installed
-
-2. Be aware of all other packages installed outside of apt
-
-  * code-server via wget
-
-  * nix via curl
-
-3. Be aware of all nix packages

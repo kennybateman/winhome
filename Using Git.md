@@ -1,4 +1,3 @@
-
 Version control, and managing copies and work progress is all facilitated with git.
 
 # The home project

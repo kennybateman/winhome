@@ -1,5 +1,4 @@
-
-Ruby has a philosophy about fetching dependencies lazily, which conflicts with the philosophy of trying to know and control everything about the versions ahead of time; which is the Nix way of thinking. Nix community (Bob Vander Linden?) manages its own [[https://github.com/bobvanderlinden/nixpkgs-ruby|repo]] of custom built ruby versions that basically handles ruby in a more nix like way. 
+Ruby has a philosophy about fetching dependencies lazily, which conflicts with the philosophy of trying to know and control everything about the versions ahead of time; which is the Nix way of thinking. Nix community (Bob Vander Linden?) manages its own [repo](https://github.com/bobvanderlinden/nixpkgs-ruby) of custom built ruby versions that basically handles ruby in a more nix like way. 
 
 # Managing the Ruby version
 

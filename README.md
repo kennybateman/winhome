@@ -1,4 +1,3 @@
-
 Welcome home. 
 
 [Here](Using%20Git.md) you can see how I want to use Git.
