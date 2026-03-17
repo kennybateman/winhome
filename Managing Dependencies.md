@@ -62,55 +62,96 @@ x64
 nix-env (Nix) 2.34.0
 ```
 
-## Nix package versions
+# Nix managed software
 
-There are Nix packages I want available on an OS User level, but I _do_ _not_ want to install them  globally or even in the User's nix-profile. I want to contain Nix more carefully by simply using a ```nix-shell``` in ```~/``` that is automatically opened and closed using ```direnv```. I want to avoid having to use User-Profiles, Channels, Flakes,  or Home-Manager; I feel like they all try to streamline this, but always risk complicating the OS having to force me to learn to commands and systems.
+There are Nix packages I want available on an OS User level, but I _do_ _not_ want to manage them  globally or even in the User's nix-profile. I want to contain Nix more carefully by simply using a ```nix-shell``` in ```~/``` that is automatically opened and closed using ```direnv```. I want to avoid having to use User-Profiles, Channels, Flakes,  or Home-Manager.
+
+# nixpkgs version
+
+All software installed through nix comes from the nixpkgs repository, hosted on github: https://github.com/NixOS/nixpkgs This repository is updated several times a day, and so anything built from it can potentially change if you don't specifically maintain a precise version. I do this with ```nixpkgs-version.txt```:
+```nix
+let
+  downloadFromGithub = { version, name, owner, sha256 }:
+    builtins.fetchTarball {
+      name = "${name}-${version}";
+      url = "https://github.com/${owner}/${name}/archive/${version}.tar.gz";
+      inherit sha256;
+    };
+
+in
+{
+  # Use the date you started using it
+  march_16_2026 = downloadFromGithub {
+    version = "917fec9";
+    owner = "NixOS";
+    name = "nixpkgs";
+    sha256 = "1x3hmj6vbza01cl5yf9d0plnmipw3ap6y0k5rl9bl11fw7gydvva";
+  };
+}
+```
+
+I plan to save all versions, and simply comment out or not use them when switching to new ones. Any version can then be imported into the home nix shell:
+```nix
+let
+  nixpkgs = (import ./nixpkgs-versions.nix).march_16_2026;
+
+in
+  { pkgs ? import nixpkgs {} }:
+```
+
+# Nix packages versions
 
 Put a Nix shell script in home that will control any OS User level packages I want available.
 
 ```nix
-{ pkgs ? import <nixpkgs> {},  
-  nixpkgs-ruby ? import (builtins.fetchTarball { url = "https://github.com/bobvanderlinden/nixpkgs-ruby/archive/c1ba161adf31119cfdbb24489766a7bcd4dbe881.tar.gz"; }),
-  ruby322 ? nixpkgs-ruby.packages.${builtins.currentSystem}."ruby-3.2.2"
-}:
-
 let
-  packages = [
-    # Ruby language
-    ruby322
-    pkgs.bundix # nix style gemset management
+  nixpkgs = (import ./nixpkgs-versions.nix).march_16_2026;
 
-    # Python language
-    pkgs.python315
-    pkgs.uv # python package and environment manager
+in
+  { pkgs ? import nixpkgs {} }:
 
-    # General language support
-    pkgs.gcc        # c-compiling
-    pkgs.openssl    # networking
-    pkgs.zlib       # compression
-    pkgs.libffi     # for foreign function interfaces
-    pkgs.libyaml    # for faster YAML parsing
-    pkgs.pkg-config # for building native extensions
-    pkgs.libxml2
-    pkgs.libxslt
-    pkgs.yarn
-]; 
+    let
+      packages = [
+        # Ruby language
+        pkgs.ruby
+        pkgs.bundix # nix style gemset management
 
-in pkgs.mkShell {
-  inherit packages;
-  shellHook = ''
-    # for some fucking reason bundix tries to overstep its authority and install to /tmp. Tell it to use $HOME/tmp instead 
-    export TMPDIR=$HOME/tmp
-    mkdir -p $TMPDIR
+        # Rails support
+        pkgs.nodejs # for js asset bundling
+        pkgs.sqlite # database
 
-    # Print out the packages in the nix shell to a file for easy reference
-    rm nix.txt
-    ${builtins.concatStringsSep "\n"
-      (map (p: "echo ${p.pname or p.name} ${p.version or ""} >> ~/nix.txt" ) packages)}
+        # Python language
+        pkgs.python315
+        pkgs.uv # python package and environment manager
 
-    ~/.welcome.sh
-  '';
-}
+        # General language support
+        pkgs.gcc        # c-compiling
+        pkgs.openssl    # networking
+        pkgs.zlib       # compression
+        pkgs.libffi     # for foreign function interfaces
+        pkgs.libyaml    # for faster YAML parsing
+        pkgs.pkg-config # for building native extensions
+        pkgs.libxml2
+        pkgs.libxslt
+        pkgs.yarn
+      ];
+
+    in pkgs.mkShell {
+      inherit packages; 
+
+      shellHook = ''
+        # bundix fails when it tries to write to /tmp, changing it to $HOME/tmp works fine
+        export TMPDIR=$HOME/tmp
+        mkdir -p $TMPDIR
+
+        # Print out the packages in the nix shell to a file for easy reference
+        rm nix.txt
+        ${builtins.concatStringsSep "\n"
+          (map (p: "echo ${p.pname or p.name} ${p.version or ""} >> ~/nix.txt" ) packages)}
+          
+        ~/.welcome.sh
+      '';
+    }
 ```
 
 The ```shellHook``` portion will run when the shell finishes loading. At this point, Nix knows the specific versions of the packages, so we can write it to a file called ```nix.txt```.

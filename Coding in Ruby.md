@@ -1,25 +1,20 @@
-Ruby has a philosophy about fetching dependencies lazily, which conflicts with the philosophy of trying to know and control everything about the versions ahead of time; which is the Nix way of thinking. Nix community (Bob Vander Linden?) manages its own [repo](https://github.com/bobvanderlinden/nixpkgs-ruby) of custom built ruby versions that basically handles ruby in a more nix like way. 
+Ruby is mostly straightforward, but rails can be tricky.
 
 # Managing the Ruby version
 
-Use Nix to manage programming language versions. The nix shell should be set up like this:
+```nixpkgs``` hosts most common versions of ruby. Nix community user Bob Vander Linden manages a separate [repo](https://github.com/bobvanderlinden/nixpkgs-ruby) of every existing ruby version, which can be used if ```nixpkgs``` ceases maintaining some specific version that is needed.
 
 ```nix
-{ nixpkgs-ruby ? import (builtins.fetchTarball {
-	url = "https://github.com/bobvanderlinden/nixpkgs-ruby/archive/c1ba161adf31119cfdbb24489766a7bcd4dbe881.tar.gz";
-  }),
-  ruby322 ? nixpkgs-ruby.packages.${builtins.currentSystem}."ruby-3.2.2"
-}:
+{ pkgs ? import nixpkgs {} }:
 
 let
   packages = [
-    ruby322
+    pkgs.ruby
     pkgs.bundix
   ]
 ```
 
-I currently do this in my home directory, so that ruby is available on a user level.
-
+I currently do this in my home directory, so that ruby is available on a user level. 
 
 # Starting a new project
 

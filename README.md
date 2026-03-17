@@ -2,7 +2,7 @@ Welcome home.
 
 [Here](Using%20Git.md) you can see how I want to use Git.
 
-[Here](Managing%20Dependencies.md) you can see how I want to use WSL.
+[Here](WSL%20Configuration.md) you can see how I want to use WSL.
 
 [Here](Using%20VSCode.md) you can see how I want to configure VSCode.
 
@@ -11,3 +11,5 @@ Welcome home.
 [Here](Coding%20in%20Ruby.md) you can see how I want to do ruby.
 
 [Here](Coding%20in%20Python.md) you can see how I want to do python.
+
+[Here](TODO.md) you can see the things I still need to do.
