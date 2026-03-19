@@ -44,19 +44,21 @@ bundix # adds to gemset.nix, and compiles
 
 # Setting up Ruby on Rails
 
-Ruby on rails, even on nix, is got as a Gem:
+Ruby on rails, even on nix, is got as a Gem. Once got, use ```rails new``` to set up a new project, and install any and all gems rails depends on. Check that rails works by running a server (```bin/rails``` is the safest reference to use). As soon as everything worked, run bundix again to validate all the new gems rails installed by adding them to ```gemset.nix``` and compiling nix store versions of them.
 
 ```sh
-bundle add rails # get the gem
+bundle add rails # get the rails gem
 
-bundix # build it with nix
+bundix # I guess run bundix now, to validate the rails version
 
 bundle exec rails new . # start new project with all default settings
 
 bin/rails server # make sure template server can run
+
+bundix # add all new installed gems to gemset.nix and compile them
 ```
 
-At this point, we need to run ```bundix```, but it's very likely to give errors like this...
+When running ```bundix``` at this point, it's very likely to give errors like:
 ```sh
 'Bundix::Nixer#serialize': Cannot convert to nix: nil (RuntimeError)
 ```
